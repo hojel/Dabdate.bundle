@@ -1,0 +1,15 @@
+[
+  {
+    "id": "user_id",
+    "label": "User ID",
+    "type": "text",
+    "default": ""
+  },
+  {
+    "id": "user_passwd",
+    "label": "User Password",
+    "type": "text",
+    "option": "hidden",
+    "default": ""
+  }
+]

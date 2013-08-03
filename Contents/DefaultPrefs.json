@@ -1,0 +1,16 @@
+[
+  {
+    "id": "quality",
+    "label": "Video Quality",
+    "type": "enum",
+    "values": ["Low", "Medium", "High"],
+    "default": "Medium"
+  },
+  {
+    "id": "localsrv",
+    "label": "Locality",
+    "type": "enum",
+    "values": ["Austrailia", "Europe", "South America", "Los Angeles", "New York"],
+    "default": "Los Angeles"
+  }
+]
