@@ -33,7 +33,7 @@ def MetadataObjectForURL(url):
 		}
 		w_url = url[ : url.find('/',8)]+'/login.php'
 		try:
-			page = HTTP.Request(w_url, values=values).content.decode('euc-kr')
+			page = HTTP.Request(w_url, headers=headers, values=values).content.decode('euc-kr')
 		except:
 			raise Ex.MediaExpired
 
@@ -41,7 +41,7 @@ def MetadataObjectForURL(url):
 		title = RE_TITLE.search(page).group(1)
 	except:
 		title = None
-		Log.Debug(page.decode('euc-kr'))
+		Log.Debug(page)
 
 	return VideoClipObject(
 		title = title
@@ -59,6 +59,7 @@ def MediaObjectsForURL(url):
 			],
 			video_resolution = 'sd',
 			audio_channels = 2,
+			container = Container.MP4,
 			video_codec = VideoCodec.H264,
 			audio_codec = AudioCodec.AAC,
 			optimized_for_streaming = True
