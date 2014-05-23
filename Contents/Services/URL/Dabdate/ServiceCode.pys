@@ -2,7 +2,9 @@ WINDOWS_HEADERS = {'User-Agent': 'Mozilla/5.0 (MSIE 9.0; Windows NT 6.1; Trident
 IPAD_HEADERS = {'User-Agent': 'Mozilla/5.0 (iPad; U; CPU OS 4_3 like Mac OS X; en-us) Mobile'}
 
 RE_TITLE = Regex('<font class=big>([^<]*)</font>')
-RE_VIDEO_URL = Regex('file: *"(.*)",')
+RE_VIDEO_DATA = Regex('data: *"(.*)",')
+
+import urlparse
 
 ####################################################################################################
 def NormalizeURL(url):
@@ -33,15 +35,16 @@ def MetadataObjectForURL(url):
 		}
 		w_url = url[ : url.find('/',8)]+'/login.php'
 		try:
-			page = HTTP.Request(w_url, values=values).content.decode('euc-kr')
+			page = HTTP.Request(w_url, values=values, headers=headers).content.decode('euc-kr')
 		except:
 			raise Ex.MediaExpired
+		Log.Info(u"Login with "+Prefs['user_id'])
 
 	try:
 		title = RE_TITLE.search(page).group(1)
 	except:
-		title = None
-		Log.Debug(page.decode('euc-kr'))
+		title = None	# in msg.php
+		Log.Debug("no title before you pay")
 
 	return VideoClipObject(
 		title = title
@@ -71,6 +74,8 @@ def PlayVideo(url):
 		headers = IPAD_HEADERS
 	else:
 		headers = WINDOWS_HEADERS
+	headers['Referer'] = url
+
 	try:
 		page = HTTP.Request(url, headers=headers).content
 	except:
@@ -84,7 +89,6 @@ def PlayVideo(url):
 			'url' : url,
 			'auto': '0'
 		}
-		headers['Referer'] = url
 		w_url = url[ : url.find('/',8)]+'/msg.php'
 		try:
 			page = HTTP.Request(w_url, values=values, headers=headers).content
@@ -92,7 +96,15 @@ def PlayVideo(url):
 			raise Ex.MediaExpired
 
 	try:
-		video_url = RE_VIDEO_URL.search(page).group(1)
+		video_qs = RE_VIDEO_DATA.search(page).group(1)
 	except:
 		raise Ex.MediaNotAvailable
+
+	try:
+		values = dict(urlparse.parse_qsl(video_qs))
+		jobj = JSON.ObjectFromURL(url[ : url.find('?')], values=values, headers=headers)
+	except:
+		raise Ex.MediaNotAvailable
+
+	video_url = jobj['fn']
 	return Redirect(video_url)
