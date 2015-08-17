@@ -12,5 +12,11 @@
     "type": "enum",
     "values": ["Austrailia", "Europe", "South America", "Los Angeles", "New York"],
     "default": "Los Angeles"
+  },
+  {
+    "id": "direct_link",
+    "label": "Direct Video Link",
+    "type": "bool",
+    "default": "false"
   }
 ]

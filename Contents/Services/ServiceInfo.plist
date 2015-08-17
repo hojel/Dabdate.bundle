@@ -9,6 +9,7 @@
 			<key>URLPatterns</key>
 			<array>
 				<string>^http://(www|m).dabdate.com/player.php?.*idx=\d+</string>
+				<string>^http://vod\d+.dabdate.com/video\d?/.*mp4</string>
 			</array>
 		</dict>
 	</dict>

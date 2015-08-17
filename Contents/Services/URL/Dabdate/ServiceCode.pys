@@ -13,6 +13,9 @@ def NormalizeURL(url):
 
 ####################################################################################################
 def MetadataObjectForURL(url):
+	if url.startswith('http://vod'):
+		return VideoClipObject()
+
 	if url.startswith('http://m.'):
 		headers = IPAD_HEADERS
 	else:
@@ -60,17 +63,22 @@ def MediaObjectsForURL(url):
 					key = Callback(PlayVideo, url=url)
 				)
 			],
-			video_resolution = 'sd',
-			audio_channels = 2,
 			container = Container.MP4,
 			video_codec = VideoCodec.H264,
+			video_resolution = 'sd',
 			audio_codec = AudioCodec.AAC,
+			audio_channels = 2,
+			bitrate = 640,
 			optimized_for_streaming = True
 		)
 	]
 
 ####################################################################################################
 def PlayVideo(url):
+	if url.startswith('http://vod'):
+		Log.Debug(url+'?'+Prefs['user_id'])
+		return Redirect(url+'?'+Prefs['user_id'])
+
 	if url.startswith('http://m.'):
 		headers = IPAD_HEADERS
 	else:
@@ -98,6 +106,7 @@ def PlayVideo(url):
 
 	try:
 		video_qs = RE_VIDEO_DATA.search(page).group(1)
+		Log.Debug(video_qs)
 	except:
 		raise Ex.MediaNotAvailable
 
@@ -107,5 +116,6 @@ def PlayVideo(url):
 	except:
 		raise Ex.MediaNotAvailable
 
+	Log.Debug(JSON.StringFromObject(jobj))
 	video_url = jobj['fn']
 	return Redirect(video_url)
